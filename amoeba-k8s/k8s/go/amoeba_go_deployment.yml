@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amoeba-go-deployment
+  labels:
+    app: amoeba-go-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amoeba-go
+  template:
+    metadata:
+      labels:
+        app: amoeba-go
+    spec:
+      containers:
+      - name: amoeba-golang
+        image: asia-east1-docker.pkg.dev/devops-349314/amamoeba-docker/amoeba-backend-go:v1
+        ports:
+        - containerPort: 80
+          name: amoeba-go-port
+        env:
+          # Define the environment variable
+          - name: db_host  # Notice that the case is different here
+                          # from the key name in the ConfigMap.
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config           # The ConfigMap this value comes from.
+                key: db_host # The key to fetch.
+          - name: db_port
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: db_port
+          - name: db_name
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: db_name
+          - name: redis_host
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: redis_host
+          - name: redis_port
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: redis_port
+          - name: redis_db
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: redis_db
+          - name: jwt_token_time
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: jwt_token_time
+          - name: jwt_ref_token_time
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: jwt_ref_token_time
+          - name: web_gin
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: web_gin
+          - name: swagger_port
+            valueFrom:
+              configMapKeyRef:
+                name: amoeba-go-config
+                key: swagger_port
+          - name: db_name #secret
+            valueFrom:
+              secretKeyRef:
+                name: amoeba-go-secret
+                key: db_name
+                optional: false # same as default; "mysecret" must exist
+                                # and include a key named "username"
+          - name: db_username
+            valueFrom:
+              secretKeyRef:
+                name: amoeba-go-secret
+                key: db_username
+                optional: false
+          - name: db_password
+            valueFrom:
+              secretKeyRef:
+                name: amoeba-go-secret
+                key: db_password
+                optional: false
+          - name: redis_password
+            valueFrom:
+              secretKeyRef:
+                name: amoeba-go-secret
+                key: redis_password
+                optional: false
+          - name: jwt_secret
+            valueFrom:
+              secretKeyRef:
+                name: amoeba-go-secret
+                key: jwt_secret
+                optional: false
