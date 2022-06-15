@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amoeba-redis-deployment
+  labels:
+    app: amoeba-redis-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amoeba-redis
+  template:
+    metadata:
+      labels:
+        app: amoeba-redis
+    spec:
+      containers:
+        - name: amoeba-redis
+          image: bitnami/redis:6.2
+          ports:
+          - containerPort: 6379
+            name: amoeba-rds-port
+          # volumeMounts:
+          # - name: amoeba-redis-config-volume
+          #   mountPath: /opt/bitnami/redis/mounted-etc
+          env:
+             - name: REDIS_PORT_NUMBER
+               valueFrom:
+                 configMapKeyRef:
+                  name: amoeba-backend-config
+                  key: redis_port
+             - name: REDIS_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                  name: amoeba-backend-secret
+                  key: redis_password
+                  optional: false
+      # volumes:
+      #   - name: amoeba-redis-config-volume
+      #     configMap:
+      #       name: amoeba-backend-config
+      #       items:
+      #       - key: redis_config
+      #         path: redis.conf

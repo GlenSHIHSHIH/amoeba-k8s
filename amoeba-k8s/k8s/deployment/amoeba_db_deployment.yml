@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amoeba-db-deployment
+  labels:
+    app: amoeba-db-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amoeba-db
+  template:
+    metadata:
+      labels:
+        app: amoeba-db
+    spec:
+      containers:
+        - name: amoeba-db
+          image: mysql:8.0.26
+          ports:
+          - containerPort: 3306
+            name: amoeba-db-port
+          volumeMounts:
+          - name: amoeba-db-config-volume
+            mountPath: /etc/mysql/conf.d
+          - name: amoeba-db-sql-volume
+            mountPath: /docker-entrypoint-initdb.d
+          - name: amoeba-db-dump-volume
+            mountPath: /var/lib/mysql
+          env:
+             - name: MYSQL_DATABASE
+               valueFrom:
+                 configMapKeyRef:
+                   name: amoeba-backend-config
+                   key: db_name
+             - name: MYSQL_ROOT_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   name: amoeba-backend-secret
+                   key: db_password
+                   optional: false
+             - name: MYSQL_USER
+               valueFrom:
+                 secretKeyRef:
+                   name: amoeba-backend-secret
+                   key: db_name
+                   optional: false
+             - name: MYSQL_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   name: amoeba-backend-secret
+                   key: db_password
+                   optional: false
+      volumes:
+      - name: amoeba-db-sql-volume
+        configMap:
+          name: amoeba-backend-config
+          items:
+          - key: db_sql
+            path: install_db.sql
+      - name: amoeba-db-config-volume
+        configMap:
+          name: amoeba-backend-config
+          items:
+          - key: db_config
+            path: mysql.cnf
+      - name: amoeba-db-dump-volume
+        emptyDir: {}
