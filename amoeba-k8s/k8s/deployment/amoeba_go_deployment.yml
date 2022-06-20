@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: amoeba-go-deployment
+  namespace: amoeba-go
   labels:
     app: amoeba-go-deploy
 spec:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: amoeba-go
-        image: asia-east1-docker.pkg.dev/devops-349314/amamoeba-docker/amoeba-backend-go:v2
+        image: asia-east1-docker.pkg.dev/devops-349314/amamoeba-docker/amoeba-backend-go:v2.1
         workingDir: /opt/go
         # command: ["/bin/sh", "-c", "/opt/go/amoeba_backend"," api"]
         command: ["/bin/sh", "-c", "./amoeba_backend api"]

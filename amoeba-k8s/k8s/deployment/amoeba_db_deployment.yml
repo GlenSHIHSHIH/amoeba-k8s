@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: amoeba-db-deployment
+  namespace: amoeba-go
   labels:
     app: amoeba-db-deploy
 spec:

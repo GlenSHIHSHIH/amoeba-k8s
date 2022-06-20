@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: amoeba-go-service
+  namespace: amoeba-go
 spec:
   type: NodePort
   selector:
@@ -20,6 +21,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: amoeba-db-service
+  namespace: amoeba-go
 spec:
   type: NodePort
   selector:
@@ -34,6 +36,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: amoeba-redis-service
+  namespace: amoeba-go
 spec:
   type: NodePort
   selector:

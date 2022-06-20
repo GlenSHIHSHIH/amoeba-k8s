@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: amoeba-redis-deployment
+  namespace: amoeba-go
   labels:
     app: amoeba-redis-deploy
 spec:
