@@ -22,10 +22,12 @@ spec:
           - containerPort: 3306
             name: amoeba-db-port
           volumeMounts:
-          - name: amoeba-db-config-volume
-            mountPath: /etc/mysql/conf.d
-          - name: amoeba-db-sql-volume
-            mountPath: /docker-entrypoint-initdb.d
+          - name: amoeba-db-config
+            mountPath: /etc/mysql/conf.d/install_db.sql
+            subPath: db_config
+          - name: amoeba-db-config
+            mountPath: /docker-entrypoint-initdb.d/mysql.cnf
+            subPath: db_sql
           - name: amoeba-db-dump-volume
             mountPath: /var/lib/mysql
           env:
@@ -53,17 +55,8 @@ spec:
                    key: db_password
                    optional: false
       volumes:
-      - name: amoeba-db-sql-volume
+      - name: amoeba-db-config
         configMap:
           name: amoeba-backend-config
-          items:
-          - key: db_sql
-            path: install_db.sql
-      - name: amoeba-db-config-volume
-        configMap:
-          name: amoeba-backend-config
-          items:
-          - key: db_config
-            path: mysql.cnf
       - name: amoeba-db-dump-volume
         emptyDir: {}
